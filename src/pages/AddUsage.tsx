@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import DashboardLayout from "@/components/DashboardLayout";
-import { getCurrentUser, addUsageRecord, isOTPVerified, calculateBill } from "@/lib/store";
+import { getCurrentUser, addUsageRecord, getUsagePreview, isOTPVerified } from "@/lib/store";
 import { PlusCircle, Calculator } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -15,7 +15,7 @@ const AddUsage = () => {
   const { toast } = useToast();
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [reading, setReading] = useState("");
-  const [preview, setPreview] = useState<{ units: number; amount: number } | null>(null);
+  const [preview, setPreview] = useState<{ dailyUsage: number; amount: number; totalUnits: number; totalBill: number } | null>(null);
 
   useEffect(() => {
     if (!user) navigate("/login");
@@ -23,10 +23,16 @@ const AddUsage = () => {
   }, []);
 
   const handlePreview = () => {
+    if (!user) return;
     const val = parseFloat(reading);
     if (isNaN(val) || val < 0) return;
-    const amount = calculateBill(val);
-    setPreview({ units: val, amount });
+    const result = getUsagePreview(user.id, date, val);
+    setPreview({
+      dailyUsage: result.dailyUsage,
+      amount: result.amount,
+      totalUnits: result.totalUnits,
+      totalBill: result.totalBill,
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -78,14 +84,28 @@ const AddUsage = () => {
               {preview && (
                 <div className="bg-accent/60 rounded-lg p-4 space-y-2">
                   <h4 className="font-semibold text-sm text-foreground">Bill Preview (Slab-based)</h4>
-                  <div className="text-xs text-muted-foreground space-y-1">
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div className="bg-card rounded-md p-2 border border-border/50">
+                      <p className="text-muted-foreground">Today's Usage</p>
+                      <p className="font-semibold text-foreground">{preview.dailyUsage} units</p>
+                    </div>
+                    <div className="bg-card rounded-md p-2 border border-border/50">
+                      <p className="text-muted-foreground">Today's Added Bill</p>
+                      <p className="font-semibold text-primary">₹{preview.amount.toLocaleString()}</p>
+                    </div>
+                    <div className="bg-card rounded-md p-2 border border-border/50">
+                      <p className="text-muted-foreground">Month Total Units</p>
+                      <p className="font-semibold text-foreground">{preview.totalUnits} units</p>
+                    </div>
+                    <div className="bg-card rounded-md p-2 border border-border/50">
+                      <p className="text-muted-foreground">Month Total Bill</p>
+                      <p className="font-semibold text-primary">₹{preview.totalBill.toLocaleString()}</p>
+                    </div>
+                  </div>
+                  <div className="text-xs text-muted-foreground border-t border-border pt-2 space-y-1">
                     <p>0–100 units: Free</p>
                     <p>101–200 units: ₹5/unit</p>
                     <p>Above 200 units: ₹7/unit</p>
-                  </div>
-                  <div className="flex justify-between pt-2 border-t border-border">
-                    <span className="font-medium text-sm">Estimated Bill</span>
-                    <span className="font-bold text-primary text-lg">₹{preview.amount.toLocaleString()}</span>
                   </div>
                 </div>
               )}
