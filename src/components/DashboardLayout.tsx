@@ -8,7 +8,7 @@ const navItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/add-usage", label: "Add Usage", icon: PlusCircle },
   { path: "/budget", label: "Budget Planner", icon: Wallet },
-  { path: "/report", label: "PDF Report", icon: FileText },
+  { path: "/report", label: "History & PDF", icon: FileText },
 ];
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
