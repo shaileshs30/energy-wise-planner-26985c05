@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/DashboardLayout";
-import { getCurrentUser, getUsageRecords, getTotalUsage, isOTPVerified, type UsageRecord } from "@/lib/store";
+import { getAvailableMonths, getCurrentMonth, getCurrentUser, getTotalUsage, getUsageRecords, isOTPVerified, type UsageRecord } from "@/lib/store";
 import { FileText, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import jsPDF from "jspdf";
@@ -13,18 +13,35 @@ const Report = () => {
   const navigate = useNavigate();
   const user = getCurrentUser();
   const { toast } = useToast();
+  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
+  const [availableMonths, setAvailableMonths] = useState<string[]>([getCurrentMonth()]);
   const [records, setRecords] = useState<UsageRecord[]>([]);
-  const totals = getTotalUsage(user?.id || "");
+  const [totals, setTotals] = useState(getTotalUsage(user?.id || "", getCurrentMonth()));
 
   useEffect(() => {
     if (!user) navigate("/login");
     else if (!isOTPVerified()) navigate("/otp");
-    else setRecords(getUsageRecords(user.id));
+    else {
+      const months = getAvailableMonths(user.id);
+      setAvailableMonths(months);
+      if (!months.includes(selectedMonth)) {
+        setSelectedMonth(months[0]);
+      }
+    }
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    setRecords(getUsageRecords(user.id, selectedMonth));
+    setTotals(getTotalUsage(user.id, selectedMonth));
+  }, [selectedMonth, user]);
+
+  const formatMonth = (month: string) => new Date(`${month}-01`).toLocaleDateString("en-IN", { month: "long", year: "numeric" });
 
   const generatePDF = () => {
     if (!user) return;
     const doc = new jsPDF();
+    const monthLabel = formatMonth(selectedMonth);
 
     // Header
     doc.setFillColor(34, 139, 80);
@@ -33,7 +50,7 @@ const Report = () => {
     doc.setFontSize(22);
     doc.text("Smart Electricity Usage Planner", 15, 20);
     doc.setFontSize(11);
-    doc.text("Electricity Bill Report", 15, 30);
+    doc.text(`Electricity Bill Report - ${monthLabel}`, 15, 30);
 
     // User Info
     doc.setTextColor(60, 60, 60);
@@ -95,9 +112,23 @@ const Report = () => {
               <FileText className="w-5 h-5 text-primary" />
               Electricity Bill Report
             </CardTitle>
-            <CardDescription>Generate and download your usage report as PDF</CardDescription>
+            <CardDescription>Generate and download your usage report as PDF for {formatMonth(selectedMonth)}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="space-y-1">
+              <label htmlFor="report-month" className="text-xs font-medium text-muted-foreground">Select Month (History)</label>
+              <select
+                id="report-month"
+                value={selectedMonth}
+                onChange={e => setSelectedMonth(e.target.value)}
+                className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                {availableMonths.map(month => (
+                  <option key={month} value={month}>{formatMonth(month)}</option>
+                ))}
+              </select>
+            </div>
+
             {/* Preview */}
             <div className="bg-accent/40 rounded-lg p-4 space-y-3">
               <div className="grid grid-cols-3 gap-4 text-center">
