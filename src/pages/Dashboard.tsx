@@ -108,15 +108,15 @@ const Dashboard = () => {
                   <AreaChart data={chartData}>
                     <defs>
                       <linearGradient id="colorUnits" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(152, 60%, 42%)" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="hsl(152, 60%, 42%)" stopOpacity={0} />
+                        <stop offset="5%" stopColor="hsl(210, 70%, 50%)" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="hsl(210, 70%, 50%)" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(145, 20%, 88%)" />
-                    <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="hsl(160, 10%, 45%)" />
-                    <YAxis tick={{ fontSize: 11 }} stroke="hsl(160, 10%, 45%)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(210, 20%, 88%)" />
+                    <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="hsl(215, 10%, 45%)" />
+                    <YAxis tick={{ fontSize: 11 }} stroke="hsl(215, 10%, 45%)" />
                     <Tooltip />
-                    <Area type="monotone" dataKey="units" stroke="hsl(152, 60%, 42%)" fill="url(#colorUnits)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="units" stroke="hsl(210, 70%, 50%)" fill="url(#colorUnits)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -129,11 +129,11 @@ const Dashboard = () => {
               <CardContent>
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(145, 20%, 88%)" />
-                    <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="hsl(160, 10%, 45%)" />
-                    <YAxis tick={{ fontSize: 11 }} stroke="hsl(160, 10%, 45%)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(210, 20%, 88%)" />
+                    <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="hsl(215, 10%, 45%)" />
+                    <YAxis tick={{ fontSize: 11 }} stroke="hsl(215, 10%, 45%)" />
                     <Tooltip />
-                    <Bar dataKey="amount" fill="hsl(152, 60%, 42%)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="amount" fill="hsl(210, 70%, 50%)" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
