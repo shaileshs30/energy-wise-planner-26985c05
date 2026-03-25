@@ -44,7 +44,7 @@ const Report = () => {
     const monthLabel = formatMonth(selectedMonth);
 
     // Header
-    doc.setFillColor(34, 139, 80);
+    doc.setFillColor(41, 121, 204);
     doc.rect(0, 0, 210, 40, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(22);
@@ -66,10 +66,10 @@ const Report = () => {
 
     // Summary
     y += 15;
-    doc.setFillColor(240, 255, 240);
+    doc.setFillColor(230, 240, 255);
     doc.roundedRect(15, y, 180, 25, 3, 3, "F");
     doc.setFontSize(11);
-    doc.setTextColor(34, 139, 80);
+    doc.setTextColor(41, 121, 204);
     doc.text(`Total Units: ${totals.totalUnits}`, 25, y + 10);
     doc.text(`Total Bill: Rs.${totals.totalBill.toLocaleString()}`, 90, y + 10);
     doc.text(`Records: ${records.length}`, 155, y + 10);
@@ -88,8 +88,8 @@ const Report = () => {
       head: [["Date", "Meter Reading", "Daily Usage (units)", "Amount"]],
       body: tableData,
       theme: "striped",
-      headStyles: { fillColor: [34, 139, 80], textColor: 255, fontStyle: "bold" },
-      alternateRowStyles: { fillColor: [240, 255, 240] },
+      headStyles: { fillColor: [41, 121, 204], textColor: 255, fontStyle: "bold" },
+      alternateRowStyles: { fillColor: [230, 240, 255] },
       styles: { fontSize: 10 },
     });
 
